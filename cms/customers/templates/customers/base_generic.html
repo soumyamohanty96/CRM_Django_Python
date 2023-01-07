@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>CMS | {% block title %}{% endblock title %}</title>
+	{% load static %}
+	<link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}"/>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/app.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-materia.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'fontawesome5.13/css/all.css' %}">
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12 branding">
+				{% if user.is_authenticated %}
+				<div class="text-right">
+					<div class="dropdown">
+						<a class="dropdown-toggle" href="#" role="button" id="userdropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<b>Welcome:</b> {{ user.username }}
+						</a>
+					  
+						<div class="dropdown-menu" aria-labelledby="userdropdown">
+							<p class="dropdown-item"><i class="fa fa-calendar" aria-hidden="true"></i> Last Login: {{ user.last_login }}</p>
+							<div class="dropdown-divider"></div>
+							<a href="{% url 'customers:change-password' %}" class="dropdown-item"><i class="fa fa-key" aria-hidden="true"></i> Change Password</a>
+							<a href="{% url 'logout' %}?next={{ request.path }}" class="dropdown-item"><i class="fa fa-sign-out-alt" aria-hidden="true"></i> Logout</a>
+						</div>
+					  </div>
+				</div>
+				{% endif %}
+				<h1><a href="{% url 'customers:customer-list' %}">Welcome to Customer Management System!</a></h1>
+			</div>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<div class="row">
+			<div id="sidebar" class="col-md-2 sidebar">
+				<a href="{% url 'customers:customer-list' %}" class="btn btn-primary btn-block"><i class="fa fa-home"></i> Home</a>
+				{% if perms.customers.can_manage_customers %}
+					<a id="add-new-customer" href="{% url 'customers:customer-create' %}" class="btn btn-warning btn-block">
+						<i class="fa fa-plus"></i> Add New Customer
+					</a>
+					<!-- <a href="#" class="btn btn-outline-success btn-block">
+						<i class="fa fa-file-csv"></i> Import CSV
+					</a> -->
+				{% endif %}
+				{% if customer_list.count >= 1 %}
+					<a href="{% url 'customers:export-csv' %}" class="btn btn-outline-success btn-block">
+						<i class="fa fa-file-csv"></i> Export as CSV
+					</a>
+					<a href="{% url 'customers:export-pdf' %}" class="btn btn-outline-success btn-block"><i class="fa fa-file-pdf"></i> Export as PDF</a>
+				{% endif %}
+
+			{% block sidebar %}
+			{% endblock sidebar %}
+			</div>
+			<div class="col-md-10 content">
+				{% block content %}
+				{% endblock content %}
+			</div>
+		</div>
+	</div>
+	<div class="container-fluid footer">
+		<div class="row">
+			<div class="col-md-12">
+				<p class="text-center developer">Developed by: <span class="developer-name">Chit Ko Ko Oo</span></p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
+<script src="{% static 'js/jquery-3.5.1.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'fontawesome5.13/js/all.js' %}"></script>
+{% block javascript %}
+{% endblock javascript %}
